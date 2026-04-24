@@ -1,13 +1,13 @@
-
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
 
+/* ================= API ROUTE FIRST ================= */
 app.post("/bfhl", (req, res) => {
   const { data } = req.body;
 
@@ -20,7 +20,7 @@ app.post("/bfhl", (req, res) => {
     const clean = str.trim();
 
     if (!/^[A-Z]->[A-Z]$/.test(clean) || clean[0] === clean[3]) {
-      invalidEntries.push(str);
+      invalidEntries.push(clean);
       return;
     }
 
@@ -35,29 +35,27 @@ app.post("/bfhl", (req, res) => {
 
   const graph = {};
   const childSet = new Set();
-const parentMap = {};
+  const parentMap = {};
 
-validEdges.forEach(edge => {
-  const [parent, child] = edge.split("->");
+  validEdges.forEach(edge => {
+    const [parent, child] = edge.split("->");
 
-  // FIX: ignore if child already has a parent
-  if (parentMap[child]) return;
+    if (parentMap[child]) return;
 
-  parentMap[child] = parent;
+    parentMap[child] = parent;
 
-  if (!graph[parent]) graph[parent] = [];
-  graph[parent].push(child);
+    if (!graph[parent]) graph[parent] = [];
+    graph[parent].push(child);
 
-  childSet.add(child);
-});
+    childSet.add(child);
+  });
 
   const nodes = new Set([...Object.keys(graph), ...childSet]);
   const roots = [...nodes].filter(n => !childSet.has(n));
 
-  // FIX: handle cycle with no root
   if (roots.length === 0 && nodes.size > 0) {
     const sortedNodes = [...nodes].sort();
-    roots.push(sortedNodes[0]); // pick lexicographically smallest node
+    roots.push(sortedNodes[0]);
   }
 
   function buildTree(node, path) {
@@ -125,4 +123,14 @@ validEdges.forEach(edge => {
   });
 });
 
-app.listen(3001, () => console.log("Server running on port 3001"));
+/* ================= SERVE FRONTEND ================= */
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+/* ================= FALLBACK ================= */
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+});
+
+/* ================= PORT FIX ================= */
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server running on", PORT));
