@@ -97,7 +97,7 @@
       try {
         const input = inputField.value.split(",");
 
-        const res = await fetch("http://localhost:3000/bfhl", {
+        const res = await fetch("https://bajaj-finserv-1-0gq0.onrender.com", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ data: input })
