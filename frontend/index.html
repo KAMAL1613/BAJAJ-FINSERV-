@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BFHL Hierarchy Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .output {
+      margin-top: 15px;
+      background: #1e1e1e;
+      color: #00ffcc;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>BFHL Hierarchy Analyzer</h2>
+
+    <textarea id="input" placeholder="Enter edges like: A->B,A->C,B->D"></textarea>
+
+    <button onclick="send()">Analyze</button>
+
+    <div id="error" class="error"></div>
+
+    <div id="output" class="output"></div>
+  </div>
+
+  <script>
+    async function send() {
+      const inputField = document.getElementById("input");
+      const output = document.getElementById("output");
+      const errorDiv = document.getElementById("error");
+
+      errorDiv.innerText = "";
+      output.innerText = "Loading...";
+
+      try {
+        const input = inputField.value.split(",");
+
+        const res = await fetch("http://localhost:3000/bfhl", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: input })
+        });
+
+        if (!res.ok) throw new Error("API error");
+
+        const data = await res.json();
+
+        output.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.innerText = "";
+        errorDiv.innerText = "❌ Failed to fetch API. Check backend.";
+      }
+    }
+  </script>
+</body>
+</html>
