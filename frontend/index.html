@@ -85,34 +85,34 @@
     <div id="output" class="output"></div>
   </div>
 
-  <script>
-    async function send() {
-      const inputField = document.getElementById("input");
-      const output = document.getElementById("output");
-      const errorDiv = document.getElementById("error");
+<script>
+  async function send() {
+    const inputField = document.getElementById("input");
+    const output = document.getElementById("output");
+    const errorDiv = document.getElementById("error");
 
-      errorDiv.innerText = "";
-      output.innerText = "Loading...";
+    errorDiv.innerText = "";
+    output.innerText = "Loading...";
 
-      try {
-        const input = inputField.value.split(",");
+    try {
+      const input = inputField.value.split(",");
 
-        const res = await fetch("https://bfhl-backend.onrender.com/bfhl", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ data: input })
-        });
+      const res = await fetch("/bfhl", {   // ✅ FIXED HERE
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: input })
+      });
 
-        if (!res.ok) throw new Error("API error");
+      if (!res.ok) throw new Error("API error");
 
-        const data = await res.json();
+      const data = await res.json();
 
-        output.innerText = JSON.stringify(data, null, 2);
-      } catch (err) {
-        output.innerText = "";
-        errorDiv.innerText = "❌ Failed to fetch API. Check backend.";
-      }
+      output.innerText = JSON.stringify(data, null, 2);
+    } catch (err) {
+      output.innerText = "";
+      errorDiv.innerText = "❌ Failed to fetch API. Check backend.";
     }
-  </script>
+  }
+</script>
 </body>
 </html>
