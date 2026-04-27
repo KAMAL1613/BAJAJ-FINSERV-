@@ -109,9 +109,9 @@ app.post("/bfhl", (req, res) => {
   });
 
   res.json({
-    user_id: "yourname_ddmmyyyy",
-    email_id: "your_email",
-    college_roll_number: "your_roll",
+    user_id: "kamal",
+    email_id: "kamal@gmail.com",
+    college_roll_number: "55",
     hierarchies,
     invalid_entries: invalidEntries,
     duplicate_edges: duplicateEdges,
